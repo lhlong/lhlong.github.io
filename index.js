@@ -24,14 +24,20 @@ async function train() {
   const optimizer = tf.train.adam(0.0001);
   model.compile({optimizer: optimizer, loss: 'categoricalCrossentropy'});
   let loss = 0;
+
+  const metrics = ['loss', 'val_loss', 'acc', 'val_acc'];
+	const container = { name: 'Model Training', styles: { height: '640px' } };
+  const fitCallbacks = tfvis.show.fitCallbacks(container, metrics);
+  
   model.fit(dataset.xs, dataset.ys, {
     epochs: 10,
-    callbacks: {
-      onBatchEnd: async (batch, logs) => {
-        loss = logs.loss.toFixed(5);
-        console.log('LOSS: ' + loss);
-        }
-      }
+    callbacks: //{
+      // onBatchEnd: async (batch, logs) => {
+      //   loss = logs.loss.toFixed(5);
+      //   console.log('LOSS: ' + loss);
+      //   }
+      // }
+      fitCallbacks
    });
 }
 
@@ -88,6 +94,9 @@ async function predict() {
 
 
 function doTraining(){
+  tfvis.show.modelSummary({name: 'Model Architecture Mobilenet'}, mobilenet);
+  tfvis.show.modelSummary({name: 'Model Architecture Customization'}, model);
+
 	train();
 }
 
